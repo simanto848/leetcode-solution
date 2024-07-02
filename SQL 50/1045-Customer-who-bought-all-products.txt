@@ -1,0 +1,21 @@
+# Write your MySQL query statement below
+WITH AllProducts AS (
+    SELECT *
+    FROM Product
+),
+    CustomerPurchases AS (
+    SELECT customer_id, COUNT(DISTINCT product_key) AS num_products_purchased
+    FROM Customer
+    GROUP BY customer_id
+),
+    TotalProductsCount AS (
+    SELECT COUNT(*) AS total_products
+    FROM AllProducts
+) 
+SELECT c.customer_id
+FROM Customer c
+JOIN AllProducts ap ON c.product_key = ap.product_key
+JOIN TotalProductsCount tpc ON true
+JOIN CustomerPurchases cp ON c.customer_id = cp.customer_id
+WHERE cp.num_products_purchased = tpc.total_products
+GROUP BY c.customer_id;

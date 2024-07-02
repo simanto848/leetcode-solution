@@ -1,0 +1,26 @@
+# Write your MySQL query statement below
+WITH TotalUsers AS (
+    SELECT COUNT(*) AS total_users
+    FROM Users
+),
+ContestRegistrations AS (
+    SELECT
+        contest_id,
+        COUNT(DISTINCT user_id) AS unique_users
+    FROM Register
+    GROUP BY contest_id
+),
+PercentageRegistrations AS (
+    SELECT
+        c.contest_id,
+        ROUND((c.unique_users / t.total_users) * 100, 2) AS percentage
+    FROM ContestRegistrations c
+    CROSS JOIN TotalUsers t
+)
+SELECT
+    contest_id,
+    percentage
+FROM PercentageRegistrations
+ORDER BY
+    percentage DESC,
+    contest_id ASC;
